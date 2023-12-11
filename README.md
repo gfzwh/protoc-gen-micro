@@ -8,13 +8,14 @@ to include the micro plugin but have since moved to protoc-gen-micro.
 ## Install
 
 ```
-go get github.com/micro/protoc-gen-micro
+go install ~/go/pkg/mod/github.com/gogo/protobuf@v1.3.2/protoc-gen-gofast/main.go
+go install github.com/shockerjue/protoc-gen-micro@v0.
 ```
 
 Also required: 
 
-- [protoc](https://github.com/google/protobuf)
-- [protoc-gen-go](https://github.com/golang/protobuf)
+- [protoc](https://github.com/google/protobuf) [mac: brew install protobuf]
+- [protoc-gen-gofast](https://github.com/gogo/protobuf/tree/master/protoc-gen-gofast)
 
 ## Usage
 
@@ -39,7 +40,7 @@ message Response {
 Generate the code
 
 ```
-protoc --proto_path=$GOPATH/src:. --micro_out=. --go_out=. greeter.proto
+protoc -I. --gofast_out=. --micro_out=.  usernode.proto
 ```
 
 Your output result should be:
