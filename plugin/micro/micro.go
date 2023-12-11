@@ -82,7 +82,7 @@ func (g *micro) GenerateImports(file *generator.FileDescriptor) {
 		return
 	}
 	g.P("import (")
-	g.P("errors")
+	g.P(`"errors"`)
 	g.P(clientPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, clientPkgPath)))
 	g.P(serverPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, serverPkgPath)))
 	g.P(contextPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, contextPkgPath)))
@@ -169,12 +169,12 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 
 	// Server registration.
 	g.P("func Register", servName, "Handler(s *", "server", ".Server, hdlr ", serverType, ", opts ...", serverPkg, ".HandlerOption) error {")
-	g.P("type ", unexport(origServName), "interface {")
+	g.P("type ", unexport(origServName), " interface {")
 	for _, method := range service.Method {
 		g.generateServerInterface(servName, method)
 	}
 	g.P("}")
-	g.P("type ", servName, "struct {")
+	g.P("type ", servName, " struct {")
 	g.P(unexport(servName))
 	g.P("}")
 	g.P("h := &", unexport(servName)+"Handler", "{hdlr}")
@@ -263,18 +263,19 @@ func (g *micro) generateServerInterface(servName string, method *pb.MethodDescri
 	CreateUser(context.Context, *CreateUserReq) (*CreateUserResp, error)
 		UserInfo(context.Context, *UserInfoReq) (*UserInfoResp, error)
 	*/
-	g.P(methName, "(context.Context", " *", inType, ") (*", outType, "error)")
+	g.P(methName, "(context.Context", ", *", inType, ") (*", outType, ",error)")
 	return hname
 }
 
 func (g *micro) generateServerMethod(servName string, method *pb.MethodDescriptorProto) string {
 	methName := generator.CamelCase(method.GetName())
 	hname := fmt.Sprintf("_%s_%s_Handler", servName, methName)
-	serveType := servName + "Handler"
+	serveType := unexport(servName) + "Handler"
 	inType := g.typeName(method.GetInputType())
 	outType := g.typeName(method.GetOutputType())
 
-	g.P("func (h *", servName, ") ", methName, "(ctx context.Context", ", in []byte", inType, ", out *", outType, ") error {")
+	// CreateUser(ctx context.Context, in []byte) (out []byte, err error)
+	g.P("func (h *", serveType, ") ", methName, "(ctx context.Context", ", in []byte",") (out []byte, err error) {")
 	g.P("var req ", inType)
 	g.P("err = req.Unmarshal(in)")
 	g.P("if nil != err { return }")
