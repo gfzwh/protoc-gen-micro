@@ -15,7 +15,7 @@ import (
 const (
 	contextPkgPath = "context"
 	clientPkgPath  = "github.com/shockerjue/gfz/client"
-	serverPkgPath  = "github.com/shockerjue.gfz/server"
+	serverPkgPath  = "github.com/shockerjue/gfz/server"
 )
 
 func init() {
@@ -203,11 +203,11 @@ func (g *micro) generateClientSignature(servName string, method *pb.MethodDescri
 	if reservedClientName[methName] {
 		methName += "_"
 	}
-	reqArg := ", req *" + g.typeName(method.GetInputType())
+	reqArg := ", in *" + g.typeName(method.GetInputType())
 	if method.GetClientStreaming() {
 		reqArg = ""
 	}
-	respName := "resp *" + g.typeName(method.GetOutputType())
+	respName := "out *" + g.typeName(method.GetOutputType())
 	if method.GetServerStreaming() || method.GetClientStreaming() {
 		respName = servName + "_" + generator.CamelCase(origMethName) + "Client"
 	}
@@ -226,11 +226,11 @@ func (g *micro) generateClientMethod(reqServ, servName, serviceDescVar string, m
 	g.P("}")
 	g.P("client := client.Client{}")
 	g.P(`req := client.NewRequest(c.serviceName, "`, reqMethod, `", in)`)
-	g.P("resp = new(", outType, ")")
+	g.P("out = new(", outType, ")")
 	// TODO: Pass descExpr to Invoke.
 	g.P(`res, err := client.Call(ctx, req, in, opts...)`)
 	g.P("if err != nil { return  }")
-	g.P("err = resp.Unmarshal(res)")
+	g.P("err = out.Unmarshal(res)")
 	g.P("}")
 	g.P()
 
@@ -270,12 +270,12 @@ func (g *micro) generateServerInterface(servName string, method *pb.MethodDescri
 func (g *micro) generateServerMethod(servName string, method *pb.MethodDescriptorProto) string {
 	methName := generator.CamelCase(method.GetName())
 	hname := fmt.Sprintf("_%s_%s_Handler", servName, methName)
-	serveType := unexport(servName) + "Handler"
+	serveType := servName + "Handler"
 	inType := g.typeName(method.GetInputType())
 	outType := g.typeName(method.GetOutputType())
 
 	// CreateUser(ctx context.Context, in []byte) (out []byte, err error)
-	g.P("func (h *", serveType, ") ", methName, "(ctx context.Context", ", in []byte",") (out []byte, err error) {")
+	g.P("func (h *", unexport(serveType), ") ", methName, "(ctx context.Context", ", in []byte",") (out []byte, err error) {")
 	g.P("var req ", inType)
 	g.P("err = req.Unmarshal(in)")
 	g.P("if nil != err { return }")
