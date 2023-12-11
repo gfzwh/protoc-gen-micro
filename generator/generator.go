@@ -1179,7 +1179,6 @@ func (g *Generator) generate(file *FileDescriptor) {
 		g.P("// is compatible with the proto package it is being compiled against.")
 		g.P("// A compilation error at this line likely means your copy of the")
 		g.P("// proto package needs to be updated.")
-		g.P("const _ = ", g.Pkg["proto"], ".ProtoPackageIsVersion", generatedCodeVersion, " // please upgrade the proto package")
 		g.P()
 	}
 	for _, td := range g.file.imp {
@@ -1325,9 +1324,6 @@ func (g *Generator) generateImports() {
 	// We almost always need a proto import.  Rather than computing when we
 	// do, which is tricky when there's a plugin, just import it and
 	// reference it later. The same argument applies to the fmt and math packages.
-	g.P("import " + g.Pkg["proto"] + " " + strconv.Quote(g.ImportPrefix+"github.com/golang/protobuf/proto"))
-	g.P("import " + g.Pkg["fmt"] + ` "fmt"`)
-	g.P("import " + g.Pkg["math"] + ` "math"`)
 	for i, s := range g.file.Dependency {
 		fd := g.fileByName(s)
 		// Do not import our own package.
@@ -1361,15 +1357,7 @@ func (g *Generator) generateImports() {
 		p.GenerateImports(g.file)
 		g.P()
 	}
-	g.P("// Reference imports to suppress errors if they are not otherwise used.")
-	g.P("var _ = ", g.Pkg["proto"], ".Marshal")
-	g.P("var _ = ", g.Pkg["fmt"], ".Errorf")
-	g.P("var _ = ", g.Pkg["math"], ".Inf")
-	for pkgName, typeName := range g.usedPackages {
-		if pkgName != g.packageName {
-			g.P("var _ = ", pkgName, ".", typeName, "{}")
-		}
-	}
+	
 	g.P()
 }
 
