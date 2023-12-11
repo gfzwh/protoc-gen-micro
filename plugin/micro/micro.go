@@ -171,7 +171,7 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	g.P("func Register", servName, "Handler(s *", "server", ".Server, hdlr ", serverType, ", opts ...", serverPkg, ".HandlerOption) error {")
 	g.P("type ", unexport(origServName), " interface {")
 	for _, method := range service.Method {
-		g.generateServerInterface(servName, method)
+		g.generateInterfaceSignature(servName, method)
 	}
 	g.P("}")
 	g.P("type ", servName, " struct {")
