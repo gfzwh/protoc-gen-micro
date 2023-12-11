@@ -14,8 +14,8 @@ import (
 // relative to the import_prefix of the generator.Generator.
 const (
 	contextPkgPath = "context"
-	clientPkgPath  = "github.com/micro/go-micro/client"
-	serverPkgPath  = "github.com/micro/go-micro/server"
+	clientPkgPath  = "github.com/shockerjue/gfz/client"
+	serverPkgPath  = "github.com/shockerjue.gfz/server"
 )
 
 func init() {
@@ -82,6 +82,7 @@ func (g *micro) GenerateImports(file *generator.FileDescriptor) {
 		return
 	}
 	g.P("import (")
+	g.P("errors")
 	g.P(clientPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, clientPkgPath)))
 	g.P(serverPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, serverPkgPath)))
 	g.P(contextPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, contextPkgPath)))
@@ -211,7 +212,7 @@ func (g *micro) generateClientSignature(servName string, method *pb.MethodDescri
 		respName = servName + "_" + generator.CamelCase(origMethName) + "Client"
 	}
 
-	return fmt.Sprintf("%s(ctx %s.Context%s, opts ...client.CallOption) (%s, error)", methName, contextPkg, reqArg, respName)
+	return fmt.Sprintf("%s(ctx %s.Context%s, opts ...client.CallOption) (%s, err error)", methName, contextPkg, reqArg, respName)
 }
 
 func (g *micro) generateClientMethod(reqServ, servName, serviceDescVar string, method *pb.MethodDescriptorProto, descExpr string) {
