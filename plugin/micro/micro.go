@@ -231,6 +231,7 @@ func (g *micro) generateClientMethod(reqServ, servName, serviceDescVar string, m
 	g.P(`res, err := client.Call(ctx, req, in, opts...)`)
 	g.P("if err != nil { return  }")
 	g.P("err = out.Unmarshal(res)")
+	g.P("return")
 	g.P("}")
 	g.P()
 
@@ -259,11 +260,15 @@ func (g *micro) generateServerInterface(servName string, method *pb.MethodDescri
 	inType := g.typeName(method.GetInputType())
 	outType := g.typeName(method.GetOutputType())
 
-	/**
-	CreateUser(context.Context, *CreateUserReq) (*CreateUserResp, error)
-		UserInfo(context.Context, *UserInfoReq) (*UserInfoResp, error)
-	*/
 	g.P(methName, "(context.Context", ", *", inType, ") (*", outType, ",error)")
+	return hname
+}
+
+func (g *micro) generateInterfaceSignature(servName string, method *pb.MethodDescriptorProto) string {
+	methName := generator.CamelCase(method.GetName())
+	hname := fmt.Sprintf("_%s_%s_Handler", servName, methName)
+
+	g.P(methName, "(ctx context.Context, in []byte) (out []byte, err error)")
 	return hname
 }
 
@@ -274,7 +279,6 @@ func (g *micro) generateServerMethod(servName string, method *pb.MethodDescripto
 	inType := g.typeName(method.GetInputType())
 	outType := g.typeName(method.GetOutputType())
 
-	// CreateUser(ctx context.Context, in []byte) (out []byte, err error)
 	g.P("func (h *", unexport(serveType), ") ", methName, "(ctx context.Context", ", in []byte",") (out []byte, err error) {")
 	g.P("var req ", inType)
 	g.P("err = req.Unmarshal(in)")
