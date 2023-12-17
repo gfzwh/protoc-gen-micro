@@ -6,16 +6,16 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gfzwh/protoc-gen-micro/generator"
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
-	"github.com/shockerjue/protoc-gen-micro/generator"
 )
 
 // Paths for packages used by code generated in this file,
 // relative to the import_prefix of the generator.Generator.
 const (
 	contextPkgPath = "context"
-	clientPkgPath  = "github.com/shockerjue/gfz/client"
-	serverPkgPath  = "github.com/shockerjue/gfz/server"
+	clientPkgPath  = "github.com/gfzwh/gfz/client"
+	serverPkgPath  = "github.com/gfzwh/gfz/server"
 )
 
 func init() {
@@ -279,7 +279,7 @@ func (g *micro) generateServerMethod(servName string, method *pb.MethodDescripto
 	inType := g.typeName(method.GetInputType())
 	outType := g.typeName(method.GetOutputType())
 
-	g.P("func (h *", unexport(serveType), ") ", methName, "(ctx context.Context", ", in []byte",") (out []byte, err error) {")
+	g.P("func (h *", unexport(serveType), ") ", methName, "(ctx context.Context", ", in []byte", ") (out []byte, err error) {")
 	g.P("var req ", inType)
 	g.P("err = req.Unmarshal(in)")
 	g.P("if nil != err { return }")
