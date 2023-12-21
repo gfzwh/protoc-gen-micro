@@ -180,9 +180,10 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	g.P("h := &", unexport(servName)+"Handler", "{hdlr}")
 	g.P("handler := server.RpcHandler()")
 	for _, method := range service.Method {
-		g.P("handler.Add(common.GenRid(\"", servName, ".", method, "\"),&server.RpcItem {")
-		g.P("Call:h.", method)
-		g.P("Name:\"", servName, ".", method, "\",")
+		methName := generator.CamelCase(method.GetName())
+		g.P("handler.Add(common.GenRid(\"", servName, ".", methName, "\"),&server.RpcItem {")
+		g.P("Call:h.", methName)
+		g.P("Name:\"", servName, ".", methName, "\",")
 		g.P("}")
 	}
 	g.P("s.NewHandler(handler)")
