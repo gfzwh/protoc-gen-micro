@@ -16,6 +16,7 @@ const (
 	contextPkgPath = "context"
 	clientPkgPath  = "github.com/gfzwh/gfz/client"
 	serverPkgPath  = "github.com/gfzwh/gfz/server"
+	commonPkgPath  = "github.com/gfzwh/gfz/common"
 )
 
 func init() {
@@ -40,6 +41,7 @@ var (
 	contextPkg string
 	clientPkg  string
 	serverPkg  string
+	commonPkg  string
 )
 
 // Init initializes the plugin.
@@ -48,6 +50,7 @@ func (g *micro) Init(gen *generator.Generator) {
 	contextPkg = generator.RegisterUniquePackageName("context", nil)
 	clientPkg = generator.RegisterUniquePackageName("client", nil)
 	serverPkg = generator.RegisterUniquePackageName("server", nil)
+	commonPkg = generator.RegisterUniquePackageName("common", nil)
 }
 
 // Given a type name defined in a .proto, return its object.
@@ -86,6 +89,7 @@ func (g *micro) GenerateImports(file *generator.FileDescriptor) {
 	g.P(clientPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, clientPkgPath)))
 	g.P(serverPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, serverPkgPath)))
 	g.P(contextPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, contextPkgPath)))
+	g.P(commonPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, commonPkgPath)))
 	g.P(")")
 	g.P()
 }
