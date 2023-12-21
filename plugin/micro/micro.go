@@ -182,7 +182,7 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	for _, method := range service.Method {
 		methName := generator.CamelCase(method.GetName())
 		g.P("handler.Add(common.GenRid(\"", servName, ".", methName, "\"),&server.RpcItem {")
-		g.P("Call:h.", methName)
+		g.P("Call:h.", methName, ",")
 		g.P("Name:\"", servName, ".", methName, "\",")
 		g.P("}")
 	}
