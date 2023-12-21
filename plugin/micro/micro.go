@@ -168,7 +168,7 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	g.P()
 
 	// Server registration.
-	g.P("func Register", servName, "Handler(s *", "server", ".Server, hdlr ", serverType, ", opts ...", serverPkg, ".HandlerOption) error {")
+	g.P("func Register", servName, "Handler(s *", "server", ".Server, hdlr ", serverType, ", opts ...", serverPkg, ".HandlerOption) {")
 	g.P("type ", unexport(origServName), " interface {")
 	for _, method := range service.Method {
 		g.generateInterfaceSignature(servName, method)
@@ -178,7 +178,14 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	g.P(unexport(servName))
 	g.P("}")
 	g.P("h := &", unexport(servName)+"Handler", "{hdlr}")
-	g.P("return s.NewHandler(", servName, "{h})")
+	g.P("handler := server.RpcHandler()")
+	for _, method := range service.Method {
+		g.P("handler.Add(common.GenRid(\"", servName, ".", method, "\"),&server.RpcItem {")
+		g.P("Call:h.", method)
+		g.P("Name:\"", servName, ".", method, "\",")
+		g.P("}")
+	}
+	g.P("s.NewHandler(handler)")
 	g.P("}")
 	g.P()
 
