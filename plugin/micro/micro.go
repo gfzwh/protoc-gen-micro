@@ -184,7 +184,7 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 		g.P("handler.Add(common.GenRid(\"", servName, ".", methName, "\"),&server.RpcItem {")
 		g.P("Call:h.", methName, ",")
 		g.P("Name:\"", servName, ".", methName, "\",")
-		g.P("}")
+		g.P("})")
 	}
 	g.P("s.NewHandler(handler)")
 	g.P("}")
