@@ -128,16 +128,18 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	// Client structure.
 	g.P("type ", unexport(servName), " struct {")
 	g.P("serviceName string")
+	g.P("c client.Client")
 	g.P("}")
 	g.P()
 
 	// NewClient factory.
-	g.P("func New", servName, " (serviceName string", "", ") ", servName, " {")
+	g.P("func New", servName, " (c client.Client, serviceName string", "", ") ", servName, " {")
 	g.P("if len(serviceName) == 0 {")
 	g.P(`serviceName = "`, serviceName, `"`)
 	g.P("}")
 	g.P("return &", unexport(servName), "{")
 	g.P("serviceName: serviceName,")
+	g.P("c: c")
 	g.P("}")
 	g.P("}")
 	g.P()
@@ -236,11 +238,10 @@ func (g *micro) generateClientMethod(reqServ, servName, serviceDescVar string, m
 	g.P(`	err = errors.New("`, reqMethod, ` req is nil")`)
 	g.P("   return")
 	g.P("}")
-	g.P("client := client.Client{}")
-	g.P(`req := client.NewRequest(c.serviceName, "`, reqMethod, `", in)`)
+	g.P(`req := c.c.NewRequest(c.serviceName, "`, reqMethod, `", in)`)
 	g.P("out = new(", outType, ")")
 	// TODO: Pass descExpr to Invoke.
-	g.P(`res, err := client.Call(ctx, req, in, opts...)`)
+	g.P(`res, err := c.c.Call(ctx, req, in, opts...)`)
 	g.P("if err != nil { return  }")
 	g.P("err = out.Unmarshal(res)")
 	g.P("return")
