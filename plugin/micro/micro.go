@@ -139,7 +139,7 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	g.P("}")
 	g.P("return &", unexport(servName), "{")
 	g.P("serviceName: serviceName,")
-	g.P("c: c")
+	g.P("c: c,")
 	g.P("}")
 	g.P("}")
 	g.P()
