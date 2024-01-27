@@ -128,12 +128,12 @@ func (g *micro) generateService(file *generator.FileDescriptor, service *pb.Serv
 	// Client structure.
 	g.P("type ", unexport(servName), " struct {")
 	g.P("serviceName string")
-	g.P("c client.Client")
+	g.P("c *client.Client")
 	g.P("}")
 	g.P()
 
 	// NewClient factory.
-	g.P("func New", servName, " (c client.Client, serviceName string", "", ") ", servName, " {")
+	g.P("func New", servName, " (c *client.Client, serviceName string", "", ") ", servName, " {")
 	g.P("if len(serviceName) == 0 {")
 	g.P(`serviceName = "`, serviceName, `"`)
 	g.P("}")
