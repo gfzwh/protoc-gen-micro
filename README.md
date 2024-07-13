@@ -2,16 +2,16 @@
 
 This is protobuf code generation for micro. We use protoc-gen-micro to reduce boilerplate code.
 
-We previously maintained a [fork](https://github.com/micro/protobuf) of [golang/protobuf](https://github.com/golang/protobuf) 
-to include the micro plugin but have since moved to protoc-gen-micro. 
+We previously maintained a [fork](https://github.com/micro/protobuf) of [golang/protobuf](https://github.com/golang/protobuf)
+to include the micro plugin but have since moved to protoc-gen-micro.
 
 ## Install
 
 ```
-go get github.com/micro/protoc-gen-micro
+go install github.com/gfzwh/protoc-gen-micro@v0.1.1
 ```
 
-Also required: 
+Also required:
 
 - [protoc](https://github.com/google/protobuf)
 - [protoc-gen-go](https://github.com/golang/protobuf)
@@ -55,4 +55,4 @@ The micro generated code includes clients and handlers which reduce boiler plate
 
 ## LICENSE
 
-protoc-gen-micro is a liberal reuse of protoc-gen-go hence we maintain the original license 
+protoc-gen-micro is a liberal reuse of protoc-gen-go hence we maintain the original license
